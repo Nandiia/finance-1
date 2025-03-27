@@ -30,13 +30,38 @@ var uiController = (function () {
 //Санхүүтэй ажиллах контроллор
 var financeController = (function () {
 
+    var Income = function (id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var Expense = function (id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value
+    };
+
+    var data = {
+        allItems : {
+            inc : [],
+            exp: []
+        },
+        totals : {
+            inc: 0,
+            exp: 0
+        }
+
+    };
+   
+
 })();
 
 
 //Холбогч контроллор
 var appController = (function (uiController, financeController) {
 
-    var DOMstrings = uiController.getDOMstrings()
+    
 
     var ctrlAddItem = function () {
         // Оруулах өгөгдлийг дэлгэцээс олж авна. -  хүмүүс дэлгэцэн дээр юу бичсэнийг олж авахын тулд дэлгэцтэй ажилладаг uiController хийж өгнө гэсэн үг юм.
@@ -48,15 +73,29 @@ var appController = (function (uiController, financeController) {
 
     };
 
-    document.querySelector(DOMstrings.addBtn).addEventListener("click" , function () {
-        ctrlAddItem();
-    });
+    var setUpEventListeners = function () {
 
-    document.addEventListener("keypress" , function (event) {
-       if (event.keyCode === 13 || event.which === 13){
-        ctrlAddItem();
+        var DOMstrings = uiController.getDOMstrings()
 
-       } 
-    })
+        document.querySelector(DOMstrings.addBtn).addEventListener("click" , function () {
+            ctrlAddItem();
+        });
+    
+        document.addEventListener("keypress" , function (event) {
+           if (event.keyCode === 13 || event.which === 13){
+            ctrlAddItem();
+    
+           } 
+        })
+
+    };
+
+    return {
+        init: setUpEventListeners()
+    }
+
+ 
 
 })(uiController, financeController);
+
+appController.init;
