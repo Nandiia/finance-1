@@ -14,7 +14,7 @@ var uiController = (function () {
             return  {
                 type: document.querySelector(DOMstrings.inputType).value,
                 description: document.querySelector(DOMstrings.inputDescription).value,
-                value: document.querySelector(DOMstrings.inputValue).value
+                value: parseInt(document.querySelector(DOMstrings.inputValue).value)
             };
         },
 
@@ -59,8 +59,6 @@ var uiController = (function () {
 
             allfieldArr[0].focus();
 
-
-
          }
     } ;
     
@@ -83,6 +81,15 @@ var financeController = (function () {
         this.value = value
     };
 
+    var calculateTotals = function (type) {
+        var sum = 0;
+        data.allItems[type].forEach(function (el) {
+            sum = sum + el.value;
+        });
+
+        data.totals[type] = sum;
+    }
+
     var data = {
         allItems : {
             inc : [],
@@ -91,9 +98,15 @@ var financeController = (function () {
         totals : {
             inc: 0,
             exp: 0
-        }
+        },
+
+        tusuv: 0,
+
+        huwi:0,
 
     };
+
+    
 
     return {
         addItem : function (type, description, value) {
@@ -120,7 +133,24 @@ var financeController = (function () {
            return item
         },
 
-        data
+        tusuvTootsooloh : function () {
+
+            calculateTotals("inc");
+            calculateTotals("exp");
+
+            data.tusuv = data.totals.inc - data.totals.exp;
+            data.huwi = Math.round((data.totals.exp / data.totals.inc) * 100)
+
+        },
+
+        tusuvAvah : function () {
+            return {
+                totalIncome: data.totals.inc,
+                tatalExpense: data.totals.exp,
+                tusuv: data.tusuv,
+                huwi: data.huwi
+            }
+        }
     }
    
 
@@ -136,7 +166,8 @@ var appController = (function (uiController, financeController) {
         // Оруулах өгөгдлийг дэлгэцээс олж авна. -  хүмүүс дэлгэцэн дээр юу бичсэнийг олж авахын тулд дэлгэцтэй ажилладаг uiController хийж өгнө гэсэн үг юм.
        var input = uiController.getInput();
 
-        // Олж авсан өгөгдүүдээ санхүүгийн контроллорт дамжуулж, тэнд хадгална.
+       if ( input.description !== "" && input.value !== "") {
+         // Олж авсан өгөгдүүдээ санхүүгийн контроллорт дамжуулж, тэнд хадгална.
         // financeController.addItem(input.type, input.description, input.value)
 
             //
@@ -148,7 +179,15 @@ var appController = (function (uiController, financeController) {
         uiController.clearField();
 
         // Төсвийг тооцоолно
+        financeController.tusuvTootsooloh();
+
+        financeController.tusuvAvah();
+        console.log(financeController.tusuvAvah())
         // Эцсийн үлдэгдэл тооцоог дэлгэцэнд гаргана
+
+       }
+
+       
 
     };
 
@@ -165,7 +204,9 @@ var appController = (function (uiController, financeController) {
             ctrlAddItem();
     
            } 
-        })
+        });
+
+        console.log("app ajillaa..")
 
     };
 
